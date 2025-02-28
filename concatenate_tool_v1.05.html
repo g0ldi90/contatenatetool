@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concatenate Tool</title>
+    <style>
+        .description {
+            margin-left: 50px; /* Adjust the value as needed */
+            margin-right: 50px;
+        }
+
+        .back-to-menu-btn button {
+            margin-left: 50px; /* Adjust the value as needed */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color: #005bb5;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin: 0; /* Add this line to remove the default margin */
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .section {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 45%;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 90%; /* Reduce width by 10% */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .confirmation-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .confirmation-text {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: rgba(0, 123, 255, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            animation: fadeOut 3s ease;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+   <script>
+        let useSingleQuotes = true; // Flag to track current quotation mark type
+
+        function formatIDs() {
+            const inputText = document.getElementById('text-box-1').value;
+            const quotes = useSingleQuotes ? "'" : '"';
+            const ids = inputText.split('\n').map(id => `${quotes}${id.replace(/'/g, '"')}${quotes}`).join(',\n');
+            document.getElementById('text-box-2').value = ids;
+
+            // Update row counters
+            updateRowCount('text-box-1-counter', 'text-box-1', inputText);
+            updateRowCount('text-box-2-counter', 'text-box-2', ids);
+        }
+
+        function switchQuotationMark() {
+            useSingleQuotes = !useSingleQuotes; // Toggle between single and double quotes
+            const buttonText = useSingleQuotes ? 'Switch to Double Quotes' : 'Switch to Single Quotes';
+            document.getElementById('switch-button').textContent = buttonText;
+
+            formatIDs(); // Reformat IDs with the new quotation mark
+        }
+
+        function updateRowCount(counterId, textBoxId, text) {
+            const rowCounter = document.getElementById(counterId);
+            const rowCount = text.trim().split('\n').filter(Boolean).length;
+            rowCounter.textContent = `Rows: ${rowCount}`;
+        }
+
+        // Corrected event listener for real-time updates on text-box-1
+        document.getElementById('text-box-1').addEventListener('input', function () {
+            const inputText = this.value;
+            updateRowCount('text-box-1-counter', 'text-box-1', inputText);
+        });
+
+        function copyToClipboard() {
+            const textBox2Value = document.getElementById('text-box-2').value;
+            navigator.clipboard.writeText(textBox2Value)
+                .then(() => {
+                    const confirmationText = document.createElement('span');
+                    confirmationText.textContent = 'Text copied to clipboard!';
+                    confirmationText.classList.add('confirmation-text');
+                    document.getElementById('confirmation-container').appendChild(confirmationText);
+                    setTimeout(() => {
+                        confirmationText.style.opacity = '0';
+                        setTimeout(() => {
+                            confirmationText.remove();
+                        }, 1000);
+                    }, 3000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Concatenate Tool</h1>
+	
+	<!-- Description Section -->
+    <div class="description">
+        <p>This tool will let you format GUIDs for queries by adding single quote or double quote signs together with commas.</p>
+    </div>
+	
+	<!-- Back to menu button at the top -->
+    <a href="file:///Users/mzlocinski/Documents/html%20tools/menu.html" class="back-to-menu-btn">
+        <button>Back to Menu</button>
+    </a>
+	
+    <div class="container">
+        <div class="section">
+            <h2>Enter IDs here</h2>
+            <textarea id="text-box-1" rows="5" cols="30"></textarea>
+            <div id="text-box-1-counter">Rows: 0</div>
+            <button onclick="formatIDs()">Format IDs</button>
+        </div>
+        <div class="section">
+            <h2>Formatted IDs</h2>
+            <textarea id="text-box-2" rows="5" cols="30" readonly></textarea>
+            <div id="text-box-2-counter">Rows: 0</div>
+            <div class="confirmation-container">
+                <button id="copy-button" onclick="copyToClipboard()">Copy to Clipboard</button>
+                <span id="confirmation-container"></span>
+            </div>
+            <button id="switch-button" onclick="switchQuotationMark()">Switch to Double Quotes</button>
+        </div>
+    </div>
+	
+	<!-- Back to menu button -->
+    <a href="file:///Users/mzlocinski/Documents/html%20tools/menu.html" class="back-to-menu-btn">
+        <button>Back to Menu</button>
+    </a>
+	
+</body>
+</html>
